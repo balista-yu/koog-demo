@@ -1,0 +1,22 @@
+spring:
+  devtools:
+    livereload:
+      enabled: true
+  application:
+    name: koog-demo
+  profiles:
+    active: ${APP_ENV:dev}
+
+logging:
+  level:
+    root: ${LOG_LEVEL:INFO}
+    org.springframework: ${LOG_LEVEL:WARN}
+  structured:
+    enabled: true
+    format:
+      console: ecs
+      file: ecs
+    json:
+      add:
+        application: koog-demo
+        environment: ${APP_ENV:dev}

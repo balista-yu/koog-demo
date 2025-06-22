@@ -1,0 +1,32 @@
+name: 'koog-demo'
+
+services:
+  app:
+    container_name: koog-demo-app-container
+    image: koog-demo/app:dev
+    build:
+      context: .
+      dockerfile: ./infra/docker/app/Dockerfile
+      cache_from:
+        - koog-demo/app:cache
+      target: ${BUILD_TARGET:-local}
+    env_file:
+      - ${ENV_FILE:-.env}
+    restart: always
+    networks:
+      - default
+    volumes:
+      - ./app:/app
+    ports:
+      - '8080:8080'
+    develop:
+      watch:
+        - action: rebuild
+          path: /app/build.gradle.kts
+        - action: rebuild
+          path: /app/gradle/libs.versions.toml
+    command: ["sh", "start.sh"]
+
+networks:
+  default:
+    name: koog-demo

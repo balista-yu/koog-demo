@@ -1,0 +1,52 @@
+version: '3'
+
+tasks:
+  default:
+    desc: show commands
+    cmds:
+      - task -l --sort none
+
+  build:
+    desc: build the container
+    cmds:
+      - docker compose build --no-cache --force-rm
+
+  up:
+    desc: start the container
+    cmds:
+      - docker compose up --watch --menu=false
+
+  stop:
+    desc: stop the container
+    cmds:
+      - docker compose stop
+
+  down:
+    desc: down the container
+    cmds:
+      - docker compose down --remove-orphans
+
+  down-v:
+    desc: down the container and volume
+    cmds:
+      - docker compose down --remove-orphans --volume
+
+  destroy:
+    desc: destroy the all image and volume
+    cmds:
+      - docker compose down --rmi all --volumes --remove-orphans
+
+  ps:
+    desc: ps the container
+    cmds:
+      - docker compose ps
+
+  logs:
+    desc: show docker logs
+    cmds:
+      - docker compose logs
+
+  watch-logs:
+    desc: watch docker logs
+    cmds:
+      - docker compose logs --follow
