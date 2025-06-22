@@ -33,6 +33,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.reactor)
     implementation(libs.spring.boot.starter.web)
+    implementation(libs.spring.boot.starter.webflux)
     implementation(libs.koog.agents)
     implementation(libs.kotlin.logging.jvm)
     implementation(libs.kotlinx.serialization.json)
