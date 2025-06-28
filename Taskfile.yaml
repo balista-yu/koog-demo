@@ -50,3 +50,29 @@ tasks:
     desc: watch docker logs
     cmds:
       - docker compose logs --follow
+
+  build-frontend:
+    desc: build frontend container only
+    cmds:
+      - docker compose build frontend --no-cache
+
+  up-frontend:
+    desc: start frontend container only
+    cmds:
+      - docker compose up frontend --watch
+
+  logs-frontend:
+    desc: show frontend logs
+    cmds:
+      - docker compose logs frontend
+
+  logs-app:
+    desc: show backend logs
+    cmds:
+      - docker compose logs app
+
+  dev:
+    desc: start full development environment
+    cmds:
+      - echo "🚀 Starting Koog Demo full stack development environment..."
+      - docker compose up --watch --menu=false
