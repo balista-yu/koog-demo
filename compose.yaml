@@ -27,6 +27,34 @@ services:
           path: /app/gradle/libs.versions.toml
     command: ["sh", "start.sh"]
 
+  frontend:
+    container_name: koog-demo-frontend-container
+    image: koog-demo/frontend:dev
+    build:
+      context: ./frontend/koog-ui
+      dockerfile: ${FRONTEND_DOCKERFILE:-Dockerfile.dev}
+      target: ${FRONTEND_BUILD_TARGET:-development}
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./frontend/koog-ui:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8080/api/koog
+      - VITE_APP_NAME=Koog Demo Dashboard
+      - VITE_DEBUG=true
+    networks:
+      - default
+    depends_on:
+      - app
+    develop:
+      watch:
+        - action: sync
+          path: ./frontend/koog-ui/src
+          target: /app/src
+        - action: rebuild
+          path: ./frontend/koog-ui/package.json
+
 networks:
   default:
     name: koog-demo
