@@ -49,4 +49,31 @@ export const workflowApi = {
   },
 };
 
+export const mcpApi = {
+  chatWithMcp: async (request: ChatRequest): Promise<ChatResponse> => {
+    const response = await apiClient.post<ChatResponse>('/chat-with-mcp', request);
+    return response.data;
+  },
+  
+  getMcpStatus: async () => {
+    const response = await apiClient.get('/mcp-status');
+    return response.data;
+  },
+  
+  getTools: async () => {
+    const response = await apiClient.get('/api/mcp/tools');
+    return response.data;
+  },
+  
+  getResources: async () => {
+    const response = await apiClient.get('/api/mcp/resources');
+    return response.data;
+  },
+  
+  callTool: async (toolName: string, toolArgs: Record<string, any>) => {
+    const response = await apiClient.post(`/api/mcp/tools/${toolName}`, toolArgs);
+    return response.data;
+  },
+};
+
 export default apiClient;

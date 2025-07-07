@@ -76,3 +76,24 @@ tasks:
     cmds:
       - echo "🚀 Starting Koog Demo full stack development environment..."
       - docker compose up --watch --menu=false
+
+  build-mcp:
+    desc: build MCP server container only
+    cmds:
+      - docker compose build mcp-server --no-cache
+
+  up-mcp:
+    desc: start MCP server container only
+    cmds:
+      - docker compose up mcp-server --watch
+
+  logs-mcp:
+    desc: show MCP server logs
+    cmds:
+      - docker compose logs mcp-server
+
+  test-mcp:
+    desc: test MCP server functionality
+    cmds:
+      - echo "🧪 Testing MCP Server..."
+      - echo '{"jsonrpc":"2.0","method":"initialize","id":1,"params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}}}' | docker compose exec -T mcp-server sh -c "java -jar app.jar"

@@ -1,0 +1,26 @@
+FROM gradle:8.11.1-jdk21
+
+WORKDIR /app
+
+# Install development tools
+RUN apt-get update && apt-get install -y \
+    curl \
+    vim \
+    bash \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy Gradle files for dependency caching
+COPY build.gradle.kts settings.gradle.kts ./
+COPY gradle/ gradle/
+
+# Download dependencies
+RUN gradle dependencies --no-daemon
+
+# Copy source code
+COPY src/ src/
+
+# Development port
+EXPOSE 3001
+
+# Development command with hot reload
+CMD ["gradle", "run", "--continuous", "--no-daemon"]

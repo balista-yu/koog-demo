@@ -55,6 +55,30 @@ services:
         - action: rebuild
           path: ./frontend/koog-ui/package.json
 
+  mcp-server:
+    container_name: koog-demo-mcp-server-container
+    image: koog-demo/mcp-server:dev
+    build:
+      context: ./mcp-server
+      dockerfile: ${MCP_DOCKERFILE:-Dockerfile.dev}
+    volumes:
+      - ./mcp-server:/app
+      - /app/build
+    environment:
+      - APP_ENV=${APP_ENV:-dev}
+      - LOG_LEVEL=${LOG_LEVEL:-DEBUG}
+      - MCP_TRANSPORT_TYPE=stdio
+    networks:
+      - default
+    restart: unless-stopped
+    develop:
+      watch:
+        - action: sync
+          path: ./mcp-server/src
+          target: /app/src
+        - action: rebuild
+          path: ./mcp-server/build.gradle.kts
+
 networks:
   default:
     name: koog-demo

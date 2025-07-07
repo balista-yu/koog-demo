@@ -6,4 +6,35 @@
 # testing
 .devcontainer
 
+# Environment
 .env
+
+# MCP
+.mcp.json
+
+# Gradle (for all modules)
+**/build/
+**/.gradle/
+!**/gradle/wrapper/gradle-wrapper.jar
+
+# Kotlin
+**/.kotlin/
+
+# Application logs and data
+**/var/logs/
+**/*.log
+**/logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+**/*.tmp
+**/*.swp
+**/*.swo
+**/*~
+
+# IDE generated
+**/.idea/
+**/*.iml
