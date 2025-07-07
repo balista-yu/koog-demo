@@ -40,6 +40,7 @@ dependencies {
 
     testImplementation(libs.spring.boot.starter.test)
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.mockito.kotlin)
     testRuntimeOnly(libs.junit.platform.launcher)
 
     developmentOnly(libs.spring.boot.devtools)

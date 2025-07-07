@@ -1,0 +1,22 @@
+logging:
+  level:
+    com.koog.mcp: DEBUG
+    root: INFO
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+spring:
+  application:
+    name: "Koog MCP Server"
+
+mcp:
+  server:
+    name: "Koog MCP Server"
+    version: "0.1.0"
+    protocol-version: "2025-03-26"
+  transport:
+    type: "stdio"  # stdio or http
+    http:
+      port: 3001
+      host: "localhost"

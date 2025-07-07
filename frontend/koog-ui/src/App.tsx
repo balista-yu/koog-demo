@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { MessageSquare, Settings, Bot } from 'lucide-react';
+import { MessageSquare, Settings, Bot, Cable } from 'lucide-react';
 import { ChatInterface } from './components/ChatInterface';
 import { WorkflowInterface } from './components/WorkflowInterface';
+import { McpStatus } from './components/McpStatus';
 import { clsx } from 'clsx';
 
 const queryClient = new QueryClient({
@@ -14,7 +15,7 @@ const queryClient = new QueryClient({
   },
 });
 
-type Tab = 'chat' | 'workflow';
+type Tab = 'chat' | 'workflow' | 'mcp';
 
 function App() {
   const [activeTab, setActiveTab] = useState<Tab>('chat');
@@ -22,6 +23,7 @@ function App() {
   const tabs = [
     { id: 'chat' as Tab, label: 'チャット', icon: MessageSquare },
     { id: 'workflow' as Tab, label: 'ワークフロー', icon: Settings },
+    { id: 'mcp' as Tab, label: 'MCP Status', icon: Cable },
   ];
 
   return (
@@ -79,6 +81,7 @@ function App() {
           <div className="h-[calc(100vh-12rem)]">
             {activeTab === 'chat' && <ChatInterface />}
             {activeTab === 'workflow' && <WorkflowInterface />}
+            {activeTab === 'mcp' && <McpStatus />}
           </div>
         </main>
       </div>

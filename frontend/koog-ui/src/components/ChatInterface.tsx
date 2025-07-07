@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Loader2, AlertCircle } from 'lucide-react';
+import { Send, Loader2, AlertCircle, Cable } from 'lucide-react';
 import { useChat } from '../hooks/useChat';
+import { mcpApi } from '../services/api';
 import { clsx } from 'clsx';
 
 interface Message {
@@ -15,11 +16,12 @@ export const ChatInterface: React.FC = () => {
     {
       id: '1',
       type: 'assistant',
-      content: 'こんにちは！Koog AIエージェントです。何かお手伝いできることはありますか？',
+      content: 'こんにちは！Koog AIエージェントです。何かお手伝いできることはありますか？\n\n💡 MCP機能を試したい場合:\n• 「天気 東京」でMCP経由の天気取得\n• 「計算 2+2」でMCP経由の計算\n• 「MCP status」でMCPサーバー状態確認',
       timestamp: Date.now(),
     },
   ]);
   const [inputValue, setInputValue] = useState('');
+  const [useMcp, setUseMcp] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
   const { sendMessage, isChatLoading, chatError, chatData } = useChat();
@@ -56,7 +58,7 @@ export const ChatInterface: React.FC = () => {
     }
   }, [chatError]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputValue.trim() || isChatLoading) return;
 
@@ -68,7 +70,56 @@ export const ChatInterface: React.FC = () => {
     };
 
     setMessages(prev => [...prev, userMessage]);
-    sendMessage({ message: inputValue.trim() });
+    
+    // Check for MCP status command
+    if (inputValue.toLowerCase().includes('mcp status')) {
+      try {
+        const mcpStatus = await mcpApi.getMcpStatus();
+        const statusMessage: Message = {
+          id: Date.now().toString(),
+          type: 'assistant',
+          content: `🔌 MCP Server Status: ${mcpStatus.status}\n\nTools: ${mcpStatus.tools?.length || 0}\nResources: ${mcpStatus.resources?.length || 0}`,
+          timestamp: Date.now(),
+        };
+        setMessages(prev => [...prev, statusMessage]);
+      } catch (error) {
+        const errorMessage: Message = {
+          id: Date.now().toString(),
+          type: 'error',
+          content: `MCP status check failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          timestamp: Date.now(),
+        };
+        setMessages(prev => [...prev, errorMessage]);
+      }
+      setInputValue('');
+      return;
+    }
+
+    // Use MCP chat if enabled or if message contains weather/calculation keywords
+    if (useMcp || inputValue.toLowerCase().includes('天気') || inputValue.toLowerCase().includes('計算') || inputValue.toLowerCase().includes('weather') || inputValue.toLowerCase().includes('calculate')) {
+      try {
+        const response = await mcpApi.chatWithMcp({ message: inputValue.trim() });
+        const mcpMessage: Message = {
+          id: Date.now().toString(),
+          type: 'assistant',
+          content: `🔌 [MCP] ${response.response}`,
+          timestamp: Date.now(),
+        };
+        setMessages(prev => [...prev, mcpMessage]);
+      } catch (error) {
+        const errorMessage: Message = {
+          id: Date.now().toString(),
+          type: 'error',
+          content: `MCP error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          timestamp: Date.now(),
+        };
+        setMessages(prev => [...prev, errorMessage]);
+      }
+    } else {
+      // Use regular chat
+      sendMessage({ message: inputValue.trim() });
+    }
+    
     setInputValue('');
   };
 
@@ -76,8 +127,24 @@ export const ChatInterface: React.FC = () => {
     <div className="flex flex-col h-full bg-white rounded-lg shadow-sm border border-gray-200">
       {/* Header */}
       <div className="px-6 py-4 border-b border-gray-200">
-        <h2 className="text-lg font-semibold text-gray-900">💬 AIチャット</h2>
-        <p className="text-sm text-gray-500">天気、計算、データ分析などができます</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-semibold text-gray-900">💬 AIチャット</h2>
+            <p className="text-sm text-gray-500">天気、計算、データ分析などができます</p>
+          </div>
+          <div className="flex items-center space-x-2">
+            <label className="flex items-center space-x-2 text-sm">
+              <input
+                type="checkbox"
+                checked={useMcp}
+                onChange={(e) => setUseMcp(e.target.checked)}
+                className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+              />
+              <Cable className="w-4 h-4" />
+              <span>MCP Mode</span>
+            </label>
+          </div>
+        </div>
       </div>
 
       {/* Messages */}
